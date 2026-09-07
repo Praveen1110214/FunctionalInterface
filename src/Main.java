@@ -1,3 +1,4 @@
+import Comparator.ComparatorImpl;
 import Consumer.ConsumerImpl;
 import Function.FunctionImpl;
 import Predicate.PredicateImpl;
@@ -99,7 +100,6 @@ public class Main {
 
         ToIntFunctionImpl toIntFunction = new ToIntFunctionImpl();
         int count = toIntFunction.applyAsInt("Praveen");
-
 
 
     }

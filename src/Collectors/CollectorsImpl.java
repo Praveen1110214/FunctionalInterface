@@ -33,10 +33,10 @@ public class CollectorsImpl {
         System.out.println(statistics.getCount());
         System.out.println(statistics.getSum());
         List<Employee> employees = List.of(
-                new Employee("Alice", 25, "IT"),
-                new Employee("Bob", 26, "Data Center"),
-                new Employee("Charlie", 27, "IT"),
-                new Employee("Alice", 30, "Networking")
+                new Employee("Alice", 25, "IT", 20000, List.of("Java", "React")),
+                new Employee("Bob", 26, "Data Center", 25000, List.of("SpringBoot", "Spring")),
+                new Employee("Charlie", 27, "IT", 30000, List.of("Python", "Java")),
+                new Employee("Alice", 30, "Networking", 80000, List.of("Kubernetes", "Python"))
         );
 
         Map<String, Employee> map = employees.stream()
@@ -62,5 +62,92 @@ public class CollectorsImpl {
                         )
                 ));
         System.out.println(employeeMap1);
+
+        List<String> employeeNames = employees.stream()
+                .map(employee -> employee.getName())
+                .toList();
+        System.out.println(employeeNames);
+
+        List<String> employeeNamesUsingMapping = employees.stream()
+                .collect(Collectors.mapping(
+                        employee -> employee.getName(),
+                        Collectors.toList()
+                ));
+        System.out.println(employeeNamesUsingMapping);
+
+        Map<String, Long> departmentCount = employees.stream()
+                .collect(
+                        Collectors.groupingBy(
+                                employee -> employee.getDepartment(),
+                                Collectors.counting()
+                        )
+                );
+        System.out.println(departmentCount);
+
+        Map<String, List<String>> departmentToEmployeeList = employees.stream()
+                .collect(Collectors.groupingBy(
+                        Employee::getDepartment,
+                        Collectors.filtering(
+                                employee -> employee.getSalary() > 20000,
+                                Collectors.mapping(
+                                        employee -> employee.getName(),
+                                        Collectors.toList()
+                                )
+                        )
+                ));
+
+        List<List<String>> skills = List.of(List.of("Java", "Python"), List.of("Networking", "Python"));
+        Set<String> set = skills.stream()
+                .flatMap(Collection::stream)
+                .collect(Collectors.toSet());
+        System.out.println(set);
+
+        Map<String, List<String>> flatMap = employees.stream()
+                .collect(Collectors.groupingBy(
+                        Employee::getName,
+                        Collectors.filtering(
+                                employee -> employee.getSalary() > 20000,
+                                Collectors.flatMapping(
+                                        employee -> employee.getSkills().stream(),
+                                        Collectors.toList()
+                                )
+                        )
+                ));
+        System.out.println(flatMap);
+
+        Map<Boolean, List<String>> partition = employees.stream()
+                .collect(Collectors.partitioningBy(
+                        employee -> employee.getSalary() > 20000,
+                        Collectors.mapping(
+                                employee -> employee.getName(),
+                                Collectors.toList()
+                        )
+                ));
+        System.out.println(partition);
+        System.out.println(employees.stream().collect(Collectors.summingInt(employee -> employee.getSalary())));
+
+        List<Integer> marks = List.of(10,20,30,40,50);
+        String mark = marks.stream()
+                .collect(Collectors.teeing(
+                        Collectors.summingInt(mark1 -> mark1),
+                        Collectors.counting(),
+                        (sum, count) ->
+                            "Sum = " + sum + ", Count = " + count
+
+                ));
+        System.out.println(mark);
+
+        String teeingResult = employees.stream()
+                .collect(Collectors.teeing(
+                        Collectors.averagingInt(
+                                employee -> employee.getSalary()
+                        ),
+                        Collectors.maxBy(
+                                Comparator.comparing(employee -> employee.getSalary())
+                        ),
+                        (average, max) -> "Average = " + average + ", Max = " +
+                                max.map(employee -> employee.getName()).orElse("None")
+                ));
+        System.out.println(teeingResult);
     }
 }
