@@ -3,6 +3,7 @@ package Comparator;
 import Employee.Employee;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ComparatorImpl implements Comparator<Employee>{
@@ -29,8 +30,40 @@ public class ComparatorImpl implements Comparator<Employee>{
         Comparator<Employee> nameComparator = Comparator.comparing(Employee::getName)
                 .thenComparing(Employee::getSalary);
         System.out.println(employees.stream().sorted(nameComparator).map(employee -> employee.getName()).toList());
+        Comparator<Employee> ageComparator = Comparator.comparing((Employee employee) -> employee.getAge())
+                .thenComparing(employee -> employee.getName());
+        System.out.println(
+            employees.stream().sorted(ageComparator).collect(Collectors.mapping(
+                    Employee::getName,
+                    Collectors.toList()
+            ))
+        );
+        System.out.println(
+                employees.stream()
+                        .sorted(ageComparator)
+                        .map(employee -> employee.getDepartment())
+                        .toList()
+        );
 
+        Map<String, String> highestPaidEmployeeInEachDepartment =
+                employees.stream()
+                        .collect(
+                                Collectors.groupingBy(
+                                        employee -> employee.getDepartment(),
+                                        Collectors.collectingAndThen(
+                                                Collectors.maxBy(Comparator.comparingInt(Employee::getSalary)),
+                                                optionalEmployee -> optionalEmployee.get().getName()
+                                        )
+                                )
+                        );
+        System.out.println(highestPaidEmployeeInEachDepartment);
+
+        AgeComparator ageComparator1 = new AgeComparator();
+        employees.stream()
+                .sorted(ageComparator1)
+                .forEach(employee -> System.out.println(employee.getName()));
+        employees.stream()
+                .sorted(Comparator.comparingInt(Employee::getAge))
+                .forEach(employee -> System.out.println(employee.getName()));
     }
-
-
 }
