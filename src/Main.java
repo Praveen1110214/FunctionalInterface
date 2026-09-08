@@ -7,12 +7,10 @@ import BiConsumer.BiConsumerImpl;
 import BiFunction.BiFunctionImpl;
 import BinaryOperator.BinaryOperatorImpl;
 import ToIntFunction.ToIntFunctionImpl;
+import UnaryOperator.UnaryOperatorImpl;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import java.util.function.*;
-import java.util.stream.Collectors;
 
 public class Main {
     public static void main(String[] args) {
@@ -101,6 +99,7 @@ public class Main {
         ToIntFunctionImpl toIntFunction = new ToIntFunctionImpl();
         int count = toIntFunction.applyAsInt("Praveen");
 
-
+        UnaryOperatorImpl unaryOperator = new UnaryOperatorImpl();
+        System.out.println(unaryOperator.apply("Praveen"));
     }
 }
